@@ -3,28 +3,34 @@
 #include <fstream>
 #include <limits>
 
-#define RAND_START_SIZE_FOR_STRING 33
-#define RAND_MAX_SIZE_FOR_STRING 127
+#define RAND_START_SIZE_FOR_STRING 33 // Начало рандомизации
+#define RAND_MAX_SIZE_FOR_STRING 127 // конец рандомизации
+
+/* Определяем функции, выполняющие шифровку и дедифровку */
 
  void Encrypt( const std::string& origin_string, std::string& key_string, std::fstream& str_out_file, const std::string& str_out_filepath, std::fstream& key_out_file, const std::string& key_out_filepath);
  std::string&  Decrypt(std::fstream& str_in_file,const std::string& str_in_filepath, std::fstream& key_in_file, const std::string& key_in_filepath) ;
+
+// ***************************************************************************************************************************************************
+
 
 int main(int argc, char* argv[]) {
 
     std::string origin_str;
     std::string key_str;
 
-    std::string filepath {"file.txt"};
-    std::fstream ioput_file;
+    std::string filepath {"file.txt"}; // путь до файла с зашифрованной строкой и
+    std::fstream ioput_file;           // самого файла
 
-    std::string encfile {"encfile.txt"};
-    std::fstream encript_file;
+    std::string encfile {"encfile.txt"}; // путь до файла с ключом шифрования и
+    std::fstream encript_file;           // самого файла
 
 
-    std::string tumbler;
+    std::string tumbler; // строка-тумблер, определяет какая функция будет выполнена, шифровка или дешифровка.
     std::cout << "Enter \" encrypt \" to encrypt string by key or enter \" decrypt \" to decrypt string in file by key" << std::endl;
     std::cin >> tumbler;
 
+/* Оператор ветвления с условиями выбора функции шифровки или дешифровки*/
 
     if(  ( tumbler.size() !=0) && ( tumbler == "encrypt" )  ) {
 
@@ -36,13 +42,13 @@ int main(int argc, char* argv[]) {
         std::cout << "Enter key string : ";
         std::getline(std::cin, key_str);
 
-        Encrypt(origin_str, key_str, ioput_file, filepath, encript_file, encfile);
+        Encrypt(origin_str, key_str, ioput_file, filepath, encript_file, encfile); // шифруем
 
       }else if (  ( tumbler.size() !=0) && ( tumbler == "decrypt" )  ) {
 
         std::cout << "We use a standart filename - \" file.txt\" to encrypt string and \"ecnfile.txt\" for key file " << std::endl;
 
-         Decrypt(ioput_file, filepath, encript_file, encfile);
+         Decrypt(ioput_file, filepath, encript_file, encfile); // дешифруем
 
       } else {
 
@@ -56,17 +62,17 @@ int main(int argc, char* argv[]) {
 
 void Encrypt( const std::string& origin_string, std::string& key_string, std::fstream& str_out_file, const std::string& str_out_filepath, std::fstream& key_out_file, const std::string& key_out_filepath) {
     std::string res;
-        srand( time( 0 ) );
+        srand( time( 0 ) ); // вызываем для получения постоянно рандомного значения
 
         char encrypt_value = RAND_START_SIZE_FOR_STRING + rand() % RAND_MAX_SIZE_FOR_STRING;
-
+/*в случе, если лень формировать строку ключа можно отдать её на генерацию программе, что и сделано ниже*/
         for (unsigned int ch = key_string.size() ; ch < origin_string.size(); ++ch ) {
                encrypt_value = RAND_START_SIZE_FOR_STRING + rand() % RAND_MAX_SIZE_FOR_STRING;
 
                 key_string += encrypt_value;
         }
 
-        if (key_string.size() == origin_string.size()) {
+        if (key_string.size() == origin_string.size()) { // Процесс шифрования XOR
 
             for (unsigned int ch = 0; ch < origin_string.size(); ++ch ) {
                 res += origin_string[ch] ^ key_string[ch];
@@ -74,7 +80,7 @@ void Encrypt( const std::string& origin_string, std::string& key_string, std::fs
             }
         }
 
- key_out_file.open(key_out_filepath, std::ios_base::out);
+ key_out_file.open(key_out_filepath, std::ios_base::out); // запись в файлы
     if (key_out_file.is_open()){
 
         key_out_file << key_string << std::endl;
@@ -103,6 +109,7 @@ std::cout << " Ecrypt done " <<std::endl;
 }
 
 
+/* открываем записанные файлы, проверяем на корректность, копируем строку, дешифруем*/
 
 std::string&  Decrypt(std::fstream& str_in_file,const std::string& str_in_filepath, std::fstream& key_in_file, const std::string& key_in_filepath) {
     std::string res;
@@ -137,7 +144,7 @@ std::string&  Decrypt(std::fstream& str_in_file,const std::string& str_in_filepa
 
         std::cout <<"We start ";
 
-        for (unsigned int ch = 0; ch < str_to_decrypt.size() ; ++ch) {
+        for (unsigned int ch = 0; ch < str_to_decrypt.size() ; ++ch) { //дешифруем, процесс аналогичен шифрованию
 
                 std::cout<< dot;
                 res += str_to_decrypt[ch] ^ key_to_use[ch];
