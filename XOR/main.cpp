@@ -166,7 +166,7 @@ std::string&  Decrypt(std::fstream& str_in_file,const std::string& str_in_filepa
                 res += str_to_decrypt[ch] ^ key_to_use[ch];
         }
 
-        std::cout<< "Done" << std::endl;
+        std::cout<< " Done" << std::endl;
         std::cout<< "original string: " << res << std::endl;
 
     return res;
