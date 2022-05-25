@@ -8,7 +8,7 @@
 
 /* Определяем функции, выполняющие шифровку и дедифровку */
 
- void Encrypt( const std::string& origin_string, std::string& key_string, std::fstream& str_out_file, const std::string& str_out_filepath, std::fstream& key_out_file, const std::string& key_out_filepath);
+ void Encrypt(  const std::string& origin_string, std::string& key_string, std::fstream& str_out_file, const std::string& str_out_filepath, std::fstream& key_out_file, const std::string& key_out_filepath);
  std::string&  Decrypt(std::fstream& str_in_file,const std::string& str_in_filepath, std::fstream& key_in_file, const std::string& key_in_filepath) ;
 
 // ***************************************************************************************************************************************************
@@ -60,25 +60,40 @@ int main(int argc, char* argv[]) {
 
 
 
-void Encrypt( const std::string& origin_string, std::string& key_string, std::fstream& str_out_file, const std::string& str_out_filepath, std::fstream& key_out_file, const std::string& key_out_filepath) {
+void Encrypt(const  std::string& origin_string,  std::string& key_string, std::fstream& str_out_file, const std::string& str_out_filepath, std::fstream& key_out_file, const std::string& key_out_filepath) {
     std::string res;
         srand( time( 0 ) ); // вызываем для получения постоянно рандомного значения
 
         char encrypt_value = RAND_START_SIZE_FOR_STRING + rand() % RAND_MAX_SIZE_FOR_STRING;
-/*в случе, если лень формировать строку ключа можно отдать её на генерацию программе, что и сделано ниже*/
-        for (unsigned int ch = key_string.size() ; ch < origin_string.size(); ++ch ) {
-               encrypt_value = RAND_START_SIZE_FOR_STRING + rand() % RAND_MAX_SIZE_FOR_STRING;
 
-                key_string += encrypt_value;
+
+       if ( key_string.size() > origin_string.size() ) {
+
+                for( unsigned int ch = key_string.size() ; ch > origin_string.size()-1; --ch ) { // если пользователь ввёл слишком большой ключ, он сокращается под размер строки шифрования
+
+                        key_string.erase(ch,1);
+
+                }
+         } else if ( key_string.size() < origin_string.size()) {
+
+            /*в случе, если лень формировать строку ключа можно отдать её на генерацию программе, что и сделано ниже*/
+                for (unsigned int ch = key_string.size() ; ch < origin_string.size(); ++ch ) {
+                        encrypt_value = RAND_START_SIZE_FOR_STRING + rand() % RAND_MAX_SIZE_FOR_STRING;
+
+                        key_string += encrypt_value;
+                    }
         }
+
 
         if (key_string.size() == origin_string.size()) { // Процесс шифрования XOR
 
             for (unsigned int ch = 0; ch < origin_string.size(); ++ch ) {
-                res += origin_string[ch] ^ key_string[ch];
+                        res += origin_string[ch] ^ key_string[ch];
 
-            }
-        }
+             }
+
+       }
+
 
  key_out_file.open(key_out_filepath, std::ios_base::out); // запись в файлы
     if (key_out_file.is_open()){
@@ -106,6 +121,7 @@ str_out_file.open(str_out_filepath, std::ios_base::out);
 
 
 std::cout << " Ecrypt done " <<std::endl;
+
 }
 
 
