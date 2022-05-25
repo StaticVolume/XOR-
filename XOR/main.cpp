@@ -2,6 +2,8 @@
 #include <string>
 #include <fstream>
 #include <limits>
+#include <chrono>
+#include <random>
 
 #define RAND_START_SIZE_FOR_STRING 33 // Начало рандомизации
 #define RAND_MAX_SIZE_FOR_STRING 127 // конец рандомизации
@@ -10,6 +12,8 @@
 
  void Encrypt(  const std::string& origin_string, std::string& key_string, std::fstream& str_out_file, const std::string& str_out_filepath, std::fstream& key_out_file, const std::string& key_out_filepath);
  std::string&  Decrypt(std::fstream& str_in_file,const std::string& str_in_filepath, std::fstream& key_in_file, const std::string& key_in_filepath) ;
+
+ int32_t GetRandom (int32_t min, int32_t max); // функция создания рандомного значения по диапазону
 
 // ***************************************************************************************************************************************************
 
@@ -62,9 +66,10 @@ int main(int argc, char* argv[]) {
 
 void Encrypt(const  std::string& origin_string,  std::string& key_string, std::fstream& str_out_file, const std::string& str_out_filepath, std::fstream& key_out_file, const std::string& key_out_filepath) {
     std::string res;
-        srand( time( 0 ) ); // вызываем для получения постоянно рандомного значения
+        //srand( time( 0 ) ); // вызываем для получения постоянно рандомного значения
 
-        char encrypt_value = RAND_START_SIZE_FOR_STRING + rand() % RAND_MAX_SIZE_FOR_STRING;
+        //char encrypt_value = RAND_START_SIZE_FOR_STRING + rand() % RAND_MAX_SIZE_FOR_STRING;
+    int32_t encrypt_value { 0 };
 
 
        if ( key_string.size() > origin_string.size() ) {
@@ -78,8 +83,8 @@ void Encrypt(const  std::string& origin_string,  std::string& key_string, std::f
 
             /*в случе, если лень формировать строку ключа можно отдать её на генерацию программе, что и сделано ниже*/
                 for (unsigned int ch = key_string.size() ; ch < origin_string.size(); ++ch ) {
-                        encrypt_value = RAND_START_SIZE_FOR_STRING + rand() % RAND_MAX_SIZE_FOR_STRING;
-
+                       // encrypt_value = RAND_START_SIZE_FOR_STRING + rand() % RAND_MAX_SIZE_FOR_STRING;
+                        encrypt_value = GetRandom(RAND_START_SIZE_FOR_STRING, RAND_MAX_SIZE_FOR_STRING);
                         key_string += encrypt_value;
                     }
         }
@@ -170,5 +175,17 @@ std::string&  Decrypt(std::fstream& str_in_file,const std::string& str_in_filepa
         std::cout<< "original string: " << res << std::endl;
 
     return res;
+
+}
+
+
+int32_t GetRandom (int32_t min, int32_t max) {
+
+        auto seed = std::chrono::system_clock::now().time_since_epoch().count(); // создание зерна случайной последовательности
+        std::mt19937_64 rand_generator(seed); // создание случайной последовательности на основании зерна
+        std::uniform_int_distribution<int32_t> dis(min, max); //создаем распредение в диапазоне от min до max
+
+        return dis(rand_generator); // вызываем как функцию передавая последовательность для получения рандомного числа от min до max
+
 
 }
