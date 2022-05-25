@@ -1,0 +1,3 @@
+/home/frenzy/git/XOR-/build-XOR-Desktop-Debug/CMakeFiles/XOR.dir
+/home/frenzy/git/XOR-/build-XOR-Desktop-Debug/CMakeFiles/edit_cache.dir
+/home/frenzy/git/XOR-/build-XOR-Desktop-Debug/CMakeFiles/rebuild_cache.dir

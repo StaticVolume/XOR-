@@ -1,0 +1,1 @@
+/usr/bin/g++ -g CMakeFiles/XOR.dir/main.cpp.o -o XOR 
